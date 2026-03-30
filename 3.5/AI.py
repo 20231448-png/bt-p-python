@@ -1,10 +1,13 @@
 import re
 import subprocess
+import os
 from openai import OpenAI
 
-# ===== API Groq =====
+# ===== Lấy API key từ biến môi trường =====
+api_key = os.getenv("GROQ_API_KEY")
+
 client = OpenAI(
-    api_key="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",
+    api_key=api_key,
     base_url="https://api.groq.com/openai/v1"
 )
 
@@ -37,7 +40,7 @@ Chỉ trả về code Python.
 
     code = response.choices[0].message.content
 
-    # xoá markdown
+    # xoá markdown nếu có ```python
     code = re.sub(r"```python|```", "", code).strip()
 
     filename = f"Bai{num}.py"
@@ -48,11 +51,22 @@ Chỉ trả về code Python.
     print("Đã tạo file:", filename)
 
 # ===== PUSH GITHUB =====
-
 print("Đang push lên GitHub...")
 
 subprocess.run(["git", "add", "."])
-subprocess.run(["git", "commit", "-m", "AI auto generate exercises"])
-subprocess.run(["git", "push"])
+
+commit = subprocess.run(
+    ["git", "commit", "-m", "AI auto generate exercises"],
+    capture_output=True,
+    text=True
+)
+
+# nếu không có thay đổi thì không commit
+if "nothing to commit" in commit.stdout:
+    print("Không có file mới để commit")
+else:
+    print("Đã commit")
+
+subprocess.run(["git", "push", "origin", "main"])
 
 print("Push GitHub thành công 🚀")
