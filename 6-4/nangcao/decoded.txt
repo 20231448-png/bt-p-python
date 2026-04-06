@@ -1,0 +1,5 @@
+hello world
+python programming is fun
+abcxyz 1234567890
+this is a longer text to test the encryption and decryption program
+data security is important in computer science
