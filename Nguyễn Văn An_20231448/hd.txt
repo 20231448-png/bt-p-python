@@ -1,0 +1,2 @@
+cài thư viện
+pip install matplotlib
